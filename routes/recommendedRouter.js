@@ -1,37 +1,37 @@
 const express = require('express');
-const Partner = require('../models/partner');
+const Recommended = require("../models/recommended");
 const authenticate = require('../ authenticate');
 const cors = require('./cors');
 
-const partnerRouter = express.Router();
+const recommendedRouter = express.Router();
 
-partnerRouter.route('/')
+recommendedRouter.route('/')
     .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
     .get(cors.cors, (req, res, next) => {
-        Partner.find()
-            .then(partners => {
+        Recommended.find()
+            .then(recommended => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
-                res.json(partners);
+                res.json(recommended);
             })
             .catch(err => next(err));
     })
     .post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-        Partner.create(req.body)
-            .then(partner => {
-                console.log('Partner Created ', partner);
+        Recommended.create(req.body)
+            .then(recommended => {
+                console.log('Recommended created ', recommended);
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
-                res.json(partner);
+                res.json(recommended);
             })
             .catch(err => next(err));
     })
     .put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
         res.statusCode = 403;
-        res.end('PUT operation not supported on /partners');
+        res.end('PUT operation not supported on /recommended');
     })
     .delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-        Partner.deleteMany()
+        Recommended.deleteMany()
             .then(response => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
@@ -40,34 +40,34 @@ partnerRouter.route('/')
             .catch(err => next(err));
     });
 
-partnerRouter.route('/:partnerId')
+    recommendedRouter.route('/:recommendedId')
     .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
     .get(cors.cors, (req, res, next) => {
-        Partner.findById(req.params.partnerId)
-            .then(partner => {
+        Recommended.findById(req.params.recommendedId)
+            .then(recommended => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
-                res.json(partner);
+                res.json(recommended);
             })
             .catch(err => next(err));
     })
     .post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
         res.statusCode = 403;
-        res.end(`POST operation not supported on /partners/${req.params.partnerId}`);
+        res.end(`POST operation not supported on /recommended/${req.params.recommendedId}`);
     })
     .put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-        Partner.findByIdAndUpdate(req.params.partnerId, {
+        Recommended.findByIdAndUpdate(req.params.recommendedId, {
             $set: req.body
         }, { new: true })
-            .then(partner => {
+            .then(recommended => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
-                res.json(partner);
+                res.json(recommended);
             })
             .catch(err => next(err));
     })
     .delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-        Partner.findByIdAndDelete(req.params.partnerId)
+        Recommended.findByIdAndDelete(req.params.recommendedId)
             .then(response => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
@@ -76,4 +76,5 @@ partnerRouter.route('/:partnerId')
             .catch(err => next(err));
     });
 
-module.exports = partnerRouter;
+
+module.exports = recommendedRouter;
